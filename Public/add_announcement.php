@@ -156,7 +156,7 @@ if (!$subject_id) {
                 </p>
             </div>
 
-            <!-- Notification -->
+            <!-- Notifications -->
             <?php if($message): ?>
             <div class="mb-6 p-4 rounded-xl border-l-4 border-green-500 bg-gradient-to-r from-green-50 to-green-100 text-green-800 flex justify-between items-center slide-in shadow-lg">
                 <div class="flex items-center space-x-3">
