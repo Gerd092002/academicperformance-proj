@@ -947,117 +947,133 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
         </div>
     </div>
 
-    <script>
-        // Tab functionality
-        function showTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabId).classList.remove('hidden');
-            
-            // Update tab buttons
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            
-            // Find the button that corresponds to this tab
-            const buttons = {
-                'profile-tab': 'Edit Profile',
-                'password-tab': 'Reset Password',
-                'activity-tab': 'Activity Info'
-            };
-            
-            // This is a simplified version - in production you'd want to store the association
-            document.querySelectorAll('.tab-button').forEach(button => {
-                if (button.textContent.includes(buttons[tabId])) {
-                    button.classList.add('active');
-                }
-            });
-        }
+   <script>
+    // Tab functionality
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        document.getElementById(tabId).classList.remove('hidden');
         
-        // Password strength checker
-        function checkPasswordStrength(password) {
-            const strengthBar = document.getElementById('password-strength-bar');
-            const resetButton = document.getElementById('resetPasswordBtn');
-            
-            if (password.length === 0) {
-                strengthBar.style.width = '0%';
-                strengthBar.className = 'password-strength-bar';
-                checkPasswordMatch();
-                return;
-            }
-            
-            let strength = 0;
-            
-            // Length check
-            if (password.length >= 6) strength++;
-            if (password.length >= 8) strength++;
-            
-            // Character variety checks
-            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-            if (/\d/.test(password)) strength++;
-            if (/[^A-Za-z0-9]/.test(password)) strength++;
-            
-            // Update strength bar
-            let width = 0;
-            let className = '';
-            
-            if (strength <= 2) {
-                width = (strength / 2) * 100;
-                className = 'password-strength-weak';
-            } else if (strength <= 4) {
-                width = (strength / 4) * 100;
-                className = 'password-strength-medium';
-            } else {
-                width = 100;
-                className = 'password-strength-strong';
-            }
-            
-            strengthBar.style.width = width + '%';
-            strengthBar.className = 'password-strength-bar ' + className;
-            
-            checkPasswordMatch();
-        }
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
         
-        // Password match checker
-        function checkPasswordMatch() {
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            const matchDiv = document.getElementById('password-match');
-            const resetButton = document.getElementById('resetPasswordBtn');
-            
-            if (newPassword === '' && confirmPassword === '') {
-                matchDiv.innerHTML = '';
-                resetButton.disabled = true;
-                return;
-            }
-            
-            if (newPassword === confirmPassword && newPassword.length >= 6) {
-                matchDiv.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i>Passwords match';
-                matchDiv.className = 'text-green-600 font-semibold';
-                resetButton.disabled = false;
-            } else if (newPassword !== confirmPassword) {
-                matchDiv.innerHTML = '<i class="fas fa-times-circle text-red-500 mr-2"></i>Passwords do not match';
-                matchDiv.className = 'text-red-600 font-semibold';
-                resetButton.disabled = true;
-            } else if (newPassword.length < 6) {
-                matchDiv.innerHTML = '<i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Password must be at least 6 characters';
-                matchDiv.className = 'text-yellow-600 font-semibold';
-                resetButton.disabled = true;
-            }
-        }
+        const buttons = {
+            'profile-tab': 'Edit Profile',
+            'password-tab': 'Reset Password',
+            'activity-tab': 'Activity Info'
+        };
         
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if there's a hash in the URL for tab navigation
-            const hash = window.location.hash.substring(1);
-            if (hash && ['profile-tab', 'password-tab', 'activity-tab'].includes(hash)) {
-                showTab(hash);
+        document.querySelectorAll('.tab-button').forEach(button => {
+            if (button.textContent.includes(buttons[tabId])) {
+                button.classList.add('active');
             }
         });
-    </script>
+    }
+    
+    // FIXED: Password strength checker
+    function checkPasswordStrength(password) {
+        const strengthBar = document.getElementById('password-strength-bar');
+        const resetButton = document.getElementById('resetPasswordBtn');
+        
+        if (!strengthBar || !resetButton) return;
+        
+        if (password.length === 0) {
+            strengthBar.style.width = '0%';
+            strengthBar.className = 'password-strength-bar';
+            checkPasswordMatch();
+            return;
+        }
+        
+        let strength = 0;
+        if (password.length >= 6) strength++;
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+        if (/\d/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        
+        let width = 0;
+        let className = '';
+        
+        if (strength <= 2) {
+            width = (strength / 2) * 100;
+            className = 'password-strength-weak';
+        } else if (strength <= 4) {
+            width = (strength / 4) * 100;
+            className = 'password-strength-medium';
+        } else {
+            width = 100;
+            className = 'password-strength-strong';
+        }
+        
+        strengthBar.style.width = width + '%';
+        strengthBar.className = 'password-strength-bar ' + className;
+        
+        checkPasswordMatch();
+    }
+    
+    // FIXED: Password match checker with better logic
+    function checkPasswordMatch() {
+        const newPassword = document.getElementById('new_password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const matchDiv = document.getElementById('password-match');
+        const resetButton = document.getElementById('resetPasswordBtn');
+        
+        if (!matchDiv || !resetButton) return;
+        
+        // Both empty - disable button
+        if (newPassword === '' && confirmPassword === '') {
+            matchDiv.innerHTML = '';
+            resetButton.disabled = true;
+            return;
+        }
+        
+        // Check length first
+        if (newPassword.length < 6) {
+            matchDiv.innerHTML = '<i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Password must be at least 6 characters';
+            matchDiv.className = 'text-yellow-600 font-semibold';
+            resetButton.disabled = true;
+            return;
+        }
+        
+        // Check if passwords match
+        if (newPassword !== confirmPassword) {
+            matchDiv.innerHTML = '<i class="fas fa-times-circle text-red-500 mr-2"></i>Passwords do not match';
+            matchDiv.className = 'text-red-600 font-semibold';
+            resetButton.disabled = true;
+            return;
+        }
+        
+        // All checks passed - enable button!
+        matchDiv.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i>Passwords match';
+        matchDiv.className = 'text-green-600 font-semibold';
+        resetButton.disabled = false;
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        const hash = window.location.hash.substring(1);
+        if (hash && ['profile-tab', 'password-tab', 'activity-tab'].includes(hash)) {
+            showTab(hash);
+        }
+        
+        // Add event listeners to password fields
+        const newPasswordInput = document.getElementById('new_password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        
+        if (newPasswordInput) {
+            newPasswordInput.addEventListener('input', function() {
+                checkPasswordStrength(this.value);
+            });
+        }
+        
+        if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', function() {
+                checkPasswordMatch();
+            });
+        }
+    });
+</script>
 </body>
 </html>

@@ -265,19 +265,7 @@ $subject_count = count($subjects);
                     <span>Manage Subjects</span>
                 </a>
                 
-                <a href="system_logs.php" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-800/30 transition">
-                    <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-history text-white"></i>
-                    </div>
-                    <span>System Logs</span>
-                </a>
-                
-                <a href="settings.php" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-800/30 transition">
-                    <div class="w-8 h-8 bg-gradient-to-r from-gray-500 to-gray-700 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-sliders-h text-white"></i>
-                    </div>
-                    <span>System Settings</span>
-                </a>
+
             </div>
         </nav>
         
